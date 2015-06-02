@@ -1,0 +1,44 @@
+#!/bin/bash
+WORK="$1"
+txtgrn='\033[0;32m'
+txtred='\033[0;31m'
+txtrst='\033[0m'
+
+if [[ ! -d "$WORK" ]] ; then
+  echo "Work dir doesn't exist: $WORK"
+  exit 5
+fi
+
+new=1 # Setting this before the loop isn't logical, but it works
+run=0
+
+while (( new > 0 )) ; do
+  prev=0   # previously set values
+  new=0    # newly set values
+
+  (( run++ ))
+  # For each cell
+  for row in {1..9} ; do
+    for col in {a..i} ; do
+      cell="${col}${row}"
+
+      # Check if there's already a val there
+      if [[ -f "$WORK/by-cell/${cell}/val" ]]; then
+        (( prev++ ))
+        continue
+      fi
+
+      possct=$(grep -c [0-9] $WORK/by-cell/${cell}/poss)
+
+      if (( possct == 1 )) ; then
+        (( new++ ))
+        ## mv $WORK/by-cell/${cell}/{poss,val}
+        # Remove value in $WORK/by-cell/${cell}/val from $WORK/by-cell/${cell}/{row,col,cube}/*/poss
+        val=$(cat $WORK/by-cell/$cell/poss)
+        echo -e "$cell has one possibility. Using ${txtgrn}${val}${txtrst}"
+        ./set.sh $WORK $cell $val
+      fi
+    done
+  done
+  echo "Run #${run} -- Previous: $prev, New: $new"
+done
