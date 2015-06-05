@@ -9,10 +9,9 @@ if [[ ! -d "$WORK" ]] ; then
   exit 5
 fi
 
-new=1 # Setting this before the loop isn't logical, but it works
 run=0
 
-while (( new > 0 )) ; do
+while : ; do
   prev=0   # previously set values
   new=0    # newly set values
 
@@ -41,4 +40,7 @@ while (( new > 0 )) ; do
     done
   done
   echo "Run #${run} -- Previous: $prev, New: $new"
+
+  # If we didn't match anything new this run, or we're done, let's bail
+  (( new == 0 || prev + new == 81  )) && break
 done
