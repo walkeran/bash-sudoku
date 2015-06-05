@@ -17,13 +17,14 @@ for row in {1..9} ; do
     cell="${col}${row}"
     output=""
 
-    # Check if there's already a val there
+    # Check if there's already a val there, and if there is, head
+    #  off to the next cell
     if [[ -f "$WORK/by-cell/${cell}/val" ]]; then
       echo "${cell}:           - $(cat $WORK/by-cell/${cell}/val)"
       continue
     fi
 
-    # Loop over each possible cell vaue
+    # Loop over each possible cell value
     for i in {1..9}; do
       # And check to see if there is anything that matches that value in the
       #  cell's row, column, and cube.

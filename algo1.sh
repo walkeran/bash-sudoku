@@ -21,18 +21,19 @@ while : ; do
     for col in {a..i} ; do
       cell="${col}${row}"
 
-      # Check if there's already a val there
+      # Check if there's already a val there. If there is, let's
+      #  go to the next cell
       if [[ -f "$WORK/by-cell/${cell}/val" ]]; then
         (( prev++ ))
         continue
       fi
 
+      # Determine number of possible values for this cell
       possct=$(grep -c [0-9] $WORK/by-cell/${cell}/poss)
 
+      # If there's only one possibility, let's set the value
       if (( possct == 1 )) ; then
         (( new++ ))
-        ## mv $WORK/by-cell/${cell}/{poss,val}
-        # Remove value in $WORK/by-cell/${cell}/val from $WORK/by-cell/${cell}/{row,col,cube}/*/poss
         val=$(cat $WORK/by-cell/$cell/poss)
         echo -e "$cell has one possibility. Using ${txtgrn}${val}${txtrst}"
         ./set.sh $WORK $cell $val

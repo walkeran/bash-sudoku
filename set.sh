@@ -23,8 +23,13 @@ if ! [[ $val =~ ^[1-9]$ ]] ; then
   exit 8
 fi
 
+# Get rid of the possibilities
 rm -f $WORK/by-cell/$cell/poss
 
+# Set the value
 echo "$val" > $WORK/by-cell/$cell/val
 
+# Filter this value out of the possibilities for all of the siblings of this cell
+# find - 'poss' files (name), that are direct relatives (min/maxdepth)
+# xargs sed - for each file (-L), edit in place (-i), and remove any line that matches the value
 find -L $WORK/by-cell/$cell/ -maxdepth 3 -mindepth 2 -name poss 2> /dev/null | xargs -L 1 sed -i "/^$val\$/d" 2> /dev/null

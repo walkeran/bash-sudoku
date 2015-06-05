@@ -21,18 +21,23 @@ while : ; do
     for col in {a..i} ; do
       cell="${col}${row}"
 
-      # Check if there's already a val there
+      # Check if there's already a val there. If there is, let's
+      #  go to the next cell
       if [[ -f "$WORK/by-cell/${cell}/val" ]]; then
         (( prev++ ))
         continue
       fi
 
-      for area in row col cube; do
-        for poss in $(cat $WORK/by-cell/$cell/poss) ; do
-          possct=$(cat $WORK/by-cell/$cell/$area/*/poss | grep -c $poss)
+      # For each possible value of this cell
+      for poss in $(cat $WORK/by-cell/$cell/poss) ; do
+        # For each "group" (row, col, and cube) that this cell is a part of
+        for group in row col cube; do
+          # Determine how many times this possibility shows up in the group
+          possct=$(cat $WORK/by-cell/$cell/$group/*/poss | grep -c $poss)
+          # If the cell we're working on is the only occurrence, then let's set the value
           if (( possct == 1 )) ; then
             (( new++ ))
-            echo -e "$cell only cell in $area with this possibility. Using ${txtgrn}${poss}${txtrst}"
+            echo -e "$cell only cell in $group with this possibility. Using ${txtgrn}${poss}${txtrst}"
             ./set.sh $WORK $cell $poss
             break 2
           fi

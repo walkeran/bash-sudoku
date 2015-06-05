@@ -12,17 +12,24 @@ if [[ ! -d "$WORK" ]] ; then
   exit 7
 fi
 
+# Open infile as fd3
 exec 3< $INFILE
 
+# For each cell
 for row in {1..9} ; do
   for col in {a..i} ; do
     cell="${col}${row}"
+
+    # Read a value, and dump it into the puzzle
     read -u 3 -r -n 1 val
     if [[ "$val" =~ [0-9] ]]; then
       echo "${val}" > $WORK/by-cell/$cell/val
     fi
   done
+
+  # At the end of the row, pop off the newline
   read -u 3 -r -n 1
 done
 
+# Closing time!
 exec 3<&-
